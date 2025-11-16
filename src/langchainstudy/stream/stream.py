@@ -19,7 +19,9 @@ from langgraph.config import get_stream_writer
 
 # 静态API密钥配置
 # 注意：在生产环境中，不建议将API密钥直接硬编码在代码中
-OPENROUTER_API_KEY = "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"
+import os
+# 从环境变量读取API密钥
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
 # 配置使用OpenRouter的ChatOpenAI实例
 try:

@@ -1,11 +1,13 @@
 
 
+import os
 from langchain.agents import create_agent
 from langchain.agents.middleware import HumanInTheLoopMiddleware
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_openai import ChatOpenAI
 
-OPENROUTER_API_KEY = "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"
+# 从环境变量读取API密钥
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
 model = ChatOpenAI(
     model = "openai/gpt-oss-20b:free",
