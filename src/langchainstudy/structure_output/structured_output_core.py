@@ -33,16 +33,25 @@ class StructuredOutputClient:
         if response_format:
             payload["response_format"] = response_format
         
-        response = requests.post(
-            f"{self.base_url}/chat/completions",
-            headers=headers,
-            json=payload
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"API请求失败: {response.status_code} - {response.text}")
-        
-        return response.json()
+        try:
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=headers,
+                json=payload
+            )
+            
+            if response.status_code != 200:
+                # 隐藏API密钥的完整信息
+                masked_api_key = self.api_key[:5] + "..." + self.api_key[-5:] if self.api_key else "None"
+                error_msg = f"API请求失败: {response.status_code} - {response.text}\n"
+                error_msg += f"提示: 请检查API密钥({masked_api_key})是否正确，以及模型({self.model})是否可用。"
+                raise Exception(error_msg)
+            
+            return response.json()
+        except Exception as e:
+            if isinstance(e, requests.exceptions.RequestException):
+                raise Exception(f"网络请求错误: {str(e)}")
+            raise
     
     def with_structured_output(self, schema: Union[Type[BaseModel], Type[TypedDict], Type, Dict[str, Any]]):
         """创建支持结构化输出的模型"""
